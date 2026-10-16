@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fluida Dinamis, Dilihat Mengalir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;800&family=Literata:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f7f5;--ink:#0e2a3b;--mute:#4d6676;--tide:#1f6f8b;--amber:#c76a14;--panel:#dcebe8;--line:#b9d0cc;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1f2b;--ink:#e6f1ee;--mute:#9db5bf;--tide:#5fb7d1;--amber:#f2a541;--panel:#122f3f;--line:#254557;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1f2b;--ink:#e6f1ee;--mute:#9db5bf;--tide:#5fb7d1;--amber:#f2a541;--panel:#122f3f;--line:#254557;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.7 Literata,Georgia,serif;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:#0a2a45;z-index:10}
+h1,h2,h3{font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.1;margin:0}
+.hero{position:relative;background:linear-gradient(180deg,#0a2a45,#14587a 80%);color:#fff;padding:72px 20px 150px;overflow:hidden}
+.hero>div{max-width:760px;margin:0 auto;position:relative;z-index:2}
+h1{font-size:clamp(2.4rem,8vw,4.4rem);font-weight:800;letter-spacing:-.02em;animation:in 1.1s cubic-bezier(.2,.8,.2,1) both}
+.hero p{color:#cfe6ef;font-size:1.15rem;max-width:52ch;margin-top:18px;animation:in 1.1s .25s cubic-bezier(.2,.8,.2,1) both}
+.go{display:inline-block;margin-top:22px;padding:12px 22px;border-radius:99px;background:#f2a541;color:#0a2a45;font:800 1rem "Bricolage Grotesque",system-ui,sans-serif;text-decoration:none;animation:in 1.1s .5s both,pulse 2.4s 1.6s infinite}
+@keyframes in{from{opacity:0;transform:translateY(26px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@keyframes pulse{50%{box-shadow:0 0 0 12px #f2a54133}}
+.bub{position:absolute;bottom:-30px;border-radius:50%;border:2px solid #ffffff55;animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-520px);opacity:0}}
+.wv{position:absolute;left:0;bottom:-1px;width:200%;height:110px;animation:slide 14s linear infinite}
+.wv.b{animation-duration:22s;animation-direction:reverse;opacity:.5;height:90px}
+.wv path{fill:var(--bg)}
+@keyframes slide{to{transform:translateX(-50%)}}
+main{max-width:760px;margin:0 auto;padding:10px 20px 80px}
+h2{font-size:1.8rem;font-weight:800;margin:64px 0 12px}
+h3{font-size:1.15rem;font-weight:800}
+p{margin:0 0 14px;max-width:62ch}
+.mu{color:var(--mute);font-size:.95rem}
+.sim{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;margin-top:24px}
+canvas{width:100%;height:auto;display:block}
+.ctl{display:grid;grid-template-columns:1fr 1fr;gap:14px 24px;padding:8px 6px}
+@media(max-width:560px){.ctl{grid-template-columns:1fr}}
+label{font:500 .95rem "Bricolage Grotesque",system-ui,sans-serif;display:block}
+input[type=range]{width:100%;accent-color:var(--tide)}
+.out{display:flex;gap:28px;flex-wrap:wrap;padding:8px 6px 4px;font-family:"Bricolage Grotesque",system-ui,sans-serif}
+.out b{font-size:1.7rem;display:block;color:var(--amber);line-height:1.1}
+.out span{color:var(--mute);font-size:.9rem}
+button{font:500 .95rem "Bricolage Grotesque",system-ui,sans-serif;border:1px solid var(--tide);background:none;color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer;transition:.2s}
+button:hover{background:var(--tide);color:var(--bg)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.law{border-left:4px solid var(--tide);padding:4px 0 4px 18px;margin:22px 0}
+.f{font:600 1.3rem Literata,Georgia,serif;margin:6px 0}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s}
+.rv.in{opacity:1;transform:none}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0}
+@media(max-width:560px){.two{grid-template-columns:1fr}}
+.two div{background:var(--panel);border-radius:14px;padding:16px;border:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px;margin-top:18px}
+.card{perspective:700px;height:200px;padding:0;border:0;background:none;text-align:left;color:var(--ink)}
+.card:hover{background:none;color:var(--ink)}
+.in2{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s}
+.card.flip .in2{transform:rotateY(180deg)}
+.fc,.bk{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;padding:16px;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
+.fc{background:var(--panel);align-items:center;text-align:center;gap:6px;font:800 1.05rem "Bricolage Grotesque",system-ui,sans-serif}
+.fc i{font-style:normal;font-size:2.6rem;animation:bob 3s ease-in-out infinite}
+.card:nth-child(even) .fc i{animation-delay:-1.5s}
+@keyframes bob{50%{transform:translateY(-8px) rotate(6deg)}}
+.bk{background:var(--tide);color:var(--bg);transform:rotateY(180deg);font-size:.88rem;line-height:1.5}
+.tank{height:110px;width:80px;border:3px solid var(--tide);border-top:0;border-radius:0 0 10px 10px;position:relative;overflow:hidden;margin:6px 0}
+.tank i{position:absolute;left:0;right:0;bottom:0;height:0;background:linear-gradient(var(--tide),#0a2a45);animation:fill var(--t,6s) linear infinite}
+@keyframes fill{to{height:100%}}
+.q{margin:24px 0}
+.opts{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.fb{margin-top:8px;color:var(--mute);min-height:1.5em}
+.ok{background:var(--tide)!important;color:var(--bg)!important}
+.no{border-color:var(--amber)!important;color:var(--amber)!important}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+td,th{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<header class="hero" id="hero">
+<svg class="wv b" viewBox="0 0 1440 120" preserveAspectRatio="none"><path d="M0 70 Q180 10 360 70 T720 70 T1080 70 T1440 70 V120 H0Z"/></svg>
+<svg class="wv" viewBox="0 0 1440 120" preserveAspectRatio="none"><path d="M0 60 Q180 0 360 60 T720 60 T1080 60 T1440 60 V120 H0Z"/></svg>
+<div>
+<h1>Air tak pernah macet di tengah jalan</h1>
+<p>Saat pipa menyempit, air tidak berhenti. Ia ngebut. Di halaman ini kamu bisa memutar, menggeser, dan menebak sendiri bagaimana fluida bergerak.</p>
+<a class="go" href="#sim">Mulai bermain</a>
+</div>
+</header>
+<main>
+<h2 id="sim" style="margin-top:36px">Simulator pipa menyempit</h2>
+<p>Geser sempitnya pipa dan lihat kecepatan serta tekanan berubah langsung.</p>
+<div class="sim">
+<canvas id="cv" width="1800" height="640" role="img" aria-label="Simulasi aliran air melewati pipa menyempit dengan dua pipa ukur tekanan"></canvas>
+<div class="ctl">
+<div><label for="d">Diameter bagian sempit: <span id="dv">50</span>% dari pipa utama</label><input id="d" type="range" min="30" max="100" value="50"></div>
+<div><label for="v">Kecepatan masuk: <span id="vv">2.0</span> m/s</label><input id="v" type="range" min="10" max="40" value="20"></div>
+</div>
+<div class="out">
+<div><b id="o1">8.0 m/s</b><span>kecepatan di bagian sempit</span></div>
+<div><b id="o2">30 kPa</b><span>tekanan turun</span></div>
+<div style="align-self:center"><button id="pl">Jeda</button></div>
+</div>
+</div>
+<p class="mu" style="margin-top:12px">Titik biru lambat, oranye cepat. Makin rendah kolom air di tabung, makin kecil tekanannya.</p>
+
+<h2 class="rv">Tiga aturan utama</h2>
+<div class="law rv"><h3>1. Kontinuitas: air tidak hilang</h3><p>Jumlah air yang lewat tiap detik sama di mana pun. Penampang mengecil, kecepatan naik.</p><div class="f">A₁v₁ = A₂v₂</div></div>
+<div class="law rv"><h3>2. Bernoulli: kecepatan dibayar dengan tekanan</h3><p>Energi per volume fluida tetap. Kecepatan naik berarti tekanan atau ketinggian turun.</p><div class="f">P + ½ρv² + ρgh = konstan</div></div>
+<div class="law rv"><h3>3. Torricelli: bocor dari tangki</h3><p>Air menyembur dari lubang sedalam h secepat benda jatuh bebas dari ketinggian h.</p><div class="f">v = √(2gh)</div></div>
+
+<h2 class="rv">Debit: berapa lama bak mandi penuh?</h2>
+<p class="rv">Debit adalah volume air per detik: Q = A·v. Atur keran, lalu lihat bak 200 liter terisi (animasi dipercepat).</p>
+<div class="sim rv">
+<div class="ctl">
+<div><label for="kd">Diameter keran: <span id="kdv">2.0</span> cm</label><input id="kd" type="range" min="10" max="40" value="20"></div>
+<div><label for="kv">Kecepatan air: <span id="kvv">2.0</span> m/s</label><input id="kv" type="range" min="5" max="40" value="20"></div>
+</div>
+<div class="out" style="align-items:center"><div class="tank"><i id="ti"></i></div><div><b id="qo">0.63 L/s</b><span>debit</span></div><div><b id="to">5 mnt 18 dtk</b><span>waktu penuh (200 L)</span></div></div>
+</div>
+
+<h2 class="rv">Laminar vs turbulen</h2>
+<p class="rv">Pada kecepatan rendah, air mengalir rapi berlapis-lapis (laminar). Dipercepat, lapisan itu pecah menjadi pusaran (turbulen). Penandanya bilangan Reynolds, Re = ρvD/μ. Di bawah sekitar 2.300 aliran laminar, di atas sekitar 4.000 turbulen.</p>
+<div class="sim rv">
+<canvas id="cl" width="1800" height="360" role="img" aria-label="Aliran laminar berubah menjadi turbulen saat kecepatan dinaikkan"></canvas>
+<div class="ctl" style="grid-template-columns:1fr"><div><label for="rv">Kecepatan air dalam pipa 2 cm: <span id="rvv">0.10</span> m/s</label><input id="rv" type="range" min="2" max="100" value="10"></div></div>
+<div class="out"><div><b id="re">2000</b><span>bilangan Reynolds</span></div><div><b id="rs">Laminar</b><span>jenis aliran</span></div></div>
+</div>
+
+<h2 class="rv">Fluida ideal dan fluida nyata</h2>
+<div class="two rv">
+<div><h3>Fluida ideal</h3><p class="mu" style="margin:6px 0 0">Tak bisa dimampatkan, tanpa kekentalan, aliran stabil. Inilah asumsi rumus-rumus di atas.</p></div>
+<div><h3>Fluida nyata</h3><p class="mu" style="margin:6px 0 0">Punya kekentalan (viskositas). Madu merambat pelan, air cepat. Sebagian energi hilang jadi panas.</p></div>
+</div>
+<table class="rv"><tr><th>Besaran</th><th>Rumus</th><th>Satuan</th></tr>
+<tr><td>Debit</td><td>Q = A·v</td><td>m³/s</td></tr>
+<tr><td>Kontinuitas</td><td>A₁v₁ = A₂v₂</td><td></td></tr>
+<tr><td>Bernoulli</td><td>P + ½ρv² + ρgh</td><td>Pa</td></tr>
+<tr><td>Torricelli</td><td>v = √(2gh)</td><td>m/s</td></tr>
+<tr><td>Venturi</td><td>ΔP = ½ρ(v₂² − v₁²)</td><td>Pa</td></tr></table>
+
+<h2 class="rv">Tangki bocor</h2>
+<div class="sim rv" style="margin-top:12px">
+<div class="ctl" style="grid-template-columns:1fr"><div><label for="h">Kedalaman lubang: <span id="hv">1.0</span> m</label><input id="h" type="range" min="1" max="50" value="10"></div></div>
+<div class="out"><div><b id="tv">4.4 m/s</b><span>kecepatan semburan (g = 9,8 m/s²)</span></div></div>
+</div>
+
+<h2 class="rv">Fluida dinamis di kehidupan sehari-hari</h2>
+<p class="rv">Ketuk kartu untuk membaliknya.</p>
+<div class="grid" id="gr"></div>
+
+<h2 class="rv">Uji dirimu</h2>
+<div id="quiz"></div>
+<p id="sc" style="font:800 1.2rem 'Bricolage Grotesque',system-ui,sans-serif;color:var(--amber)"></p>
+</main>
+<script>
+const $=i=>document.getElementById(i);
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+for(let i=0;i<14;i++){const b=document.createElement('span');b.className='bub';const s=6+Math.random()*18;
+b.style.cssText=`left:${Math.random()*100}%;width:${s}px;height:${s}px;animation-duration:${6+Math.random()*8}s;animation-delay:-${Math.random()*10}s`;$('hero').appendChild(b)}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+// simulator pipa
+const cv=$('cv'),g=cv.getContext('2d'),W=900,CY=215,H1=62;
+let r=.5,v1=2,run=!still;
+const hh=x=>H1-(H1-H1*r)*Math.exp(-Math.pow((x-W/2)/110,2));
+const P=Array.from({length:170},()=>({x:Math.random()*W,u:Math.random()*1.8-.9}));
+const calc=()=>{const v2=v1/(r*r);return{v2,dp:.5*v2*v2*1000/1000-.5*v1*v1}};
+function upd(){const{v2,dp}=calc();$('dv').textContent=Math.round(r*100);$('vv').textContent=v1.toFixed(1);$('o1').textContent=v2.toFixed(1)+' m/s';$('o2').textContent=Math.round(dp)+' kPa'}
+function draw(){g.setTransform(2,0,0,2,0,0);g.clearRect(0,0,W,320);
+const tide=css('--tide'),ink=css('--ink');
+g.beginPath();g.moveTo(0,CY-hh(0));for(let x=0;x<=W;x+=6)g.lineTo(x,CY-hh(x));for(let x=W;x>=0;x-=6)g.lineTo(x,CY+hh(x));
+g.closePath();g.fillStyle=css('--bg');g.fill();g.lineWidth=3;g.strokeStyle=tide;g.stroke();
+for(const p of P){const k=H1/hh(p.x),t=Math.min((k*k-1)/10,1);g.fillStyle=`hsl(${200-165*t} 80% 55%)`;g.beginPath();g.arc(p.x,CY+p.u*hh(p.x),3,0,7);g.fill()}
+const{dp}=calc(),c2=90-78*Math.min(dp/300,1);
+[[170,H1,90],[W/2,hh(W/2),c2]].forEach(([x,h,c])=>{const y=CY-h;g.strokeStyle=ink;g.lineWidth=2;g.strokeRect(x-13,y-100,26,100);g.fillStyle=tide;g.fillRect(x-12,y-c,24,c)})}
+// laminar / turbulen
+const cl=$('cl'),l=cl.getContext('2d'),R=9,L=Array.from({length:R*26},(_,i)=>({x:Math.random()*W,row:i%R,dy:0,vy:0}));
+let vel=.1;
+function updRe(){const re=Math.round(1000*vel*.02/.001);$('rvv').textContent=vel.toFixed(2);$('re').textContent=re;$('rs').textContent=re<2300?'Laminar':re<4000?'Transisi':'Turbulen'}
+function stepL(dt){const re=1000*vel*.02/.001,T=Math.min(Math.max((re-2000)/6000,0),1);
+for(const p of L){p.x+=(60+vel*500)*dt;if(p.x>W)p.x=0;p.vy+=(Math.random()-.5)*T*900*dt-p.dy*6*dt;p.vy*=.92;p.dy+=p.vy*dt;p.dy=Math.max(-40,Math.min(40,p.dy))}}
+function drawL(){l.setTransform(2,0,0,2,0,0);l.clearRect(0,0,W,180);
+for(const p of L){const y=20+p.row*17+p.dy;l.fillStyle=`hsl(${200-Math.abs(p.dy)*3} 75% 55%)`;l.beginPath();l.arc(p.x,y,2.6,0,7);l.fill()}}
+let last=0;
+function loop(t){const dt=Math.min((t-last)/1000,.05);last=t;
+if(run)for(const p of P){const k=H1/hh(p.x);p.x+=45*(v1/2)*k*k*dt;if(p.x>W){p.x=0;p.u=Math.random()*1.8-.9}}
+if(run)stepL(dt);draw();drawL();requestAnimationFrame(loop)}
+$('d').oninput=e=>{r=e.target.value/100;upd()};
+$('v').oninput=e=>{v1=e.target.value/10;upd()};
+$('pl').onclick=e=>{run=!run;e.target.textContent=run?'Jeda':'Jalankan'};
+if(!run)$('pl').textContent='Jalankan';
+$('rv').oninput=e=>{vel=e.target.value/100;updRe()};
+// debit
+function debit(){const d=$('kd').value/10,v=$('kv').value/10,q=Math.PI*Math.pow(d/200,2)*v*1000,t=200/q;
+$('kdv').textContent=d.toFixed(1);$('kvv').textContent=v.toFixed(1);$('qo').textContent=q.toFixed(2)+' L/s';
+$('to').textContent=Math.floor(t/60)+' mnt '+Math.round(t%60)+' dtk';$('ti').style.setProperty('--t',Math.min(Math.max(t/30,1.5),12)+'s')}
+$('kd').oninput=debit;$('kv').oninput=debit;
+$('h').oninput=e=>{const h=e.target.value/10;$('hv').textContent=h.toFixed(1);$('tv').textContent=Math.sqrt(2*9.8*h).toFixed(1)+' m/s'};
+upd();updRe();debit();requestAnimationFrame(loop);
+// kartu
+[["🪠","Selang taman","Jempol menutup sebagian ujung selang: penampang mengecil, air jadi lebih cepat dan menyembur jauh. Itu kontinuitas."],
+["🧴","Semprotan nyamuk","Udara cepat di ujung selang kecil menurunkan tekanan. Tekanan udara luar mendorong cairan naik lalu terhambur."],
+["✈️","Pesawat terbang","Udara di atas sayap lebih cepat, tekanannya lebih rendah. Selisih tekanan itu mengangkat pesawat."],
+["🏠","Atap diterbangkan angin","Angin kencang di atas atap menurunkan tekanan, sementara udara di dalam rumah tetap normal. Atap terangkat."],
+["🚿","Tirai mandi menempel","Pancuran menggerakkan udara dan menurunkan tekanan di dalam. Udara luar mendorong tirai ke badanmu."],
+["⚽","Bola melengkung","Bola berputar menyeret udara. Satu sisi lebih cepat, tekanannya lebih rendah, dan bola membelok ke sisi itu."],
+["🚰","Menara air PDAM","Air di tangki tinggi menghasilkan tekanan ρgh di pipa bawah, sehingga keran di rumah bisa mengalir tanpa pompa."],
+["🏭","Cerobong asap","Angin yang lewat di ujung cerobong menurunkan tekanan di sana, jadi asap tertarik naik lebih lancar."]].forEach(c=>{
+const b=document.createElement('button');b.className='card rv';b.setAttribute('aria-label',c[1]);
+b.innerHTML=`<div class="in2"><div class="fc"><i>${c[0]}</i>${c[1]}</div><div class="bk">${c[2]}</div></div>`;
+b.onclick=()=>b.classList.toggle('flip');$('gr').appendChild(b);io.observe(b)});
+// kuis
+const Q=[["Debit tetap, pipa menyempit. Kecepatan air...",["Naik","Turun","Tetap"],0,"A mengecil, maka v membesar."],
+["Dibanding bagian lebar, tekanan di bagian sempit...",["Lebih tinggi","Lebih rendah","Sama"],1,"Kecepatan naik berarti tekanan turun (Bernoulli)."],
+["Mengapa sayap pesawat memberi gaya angkat?",["Udara di atas lebih cepat, tekanannya lebih rendah","Udara di bawah lebih cepat","Sayap lebih ringan dari udara"],0,"Selisih tekanan atas dan bawah mengangkat sayap."],
+["Lubang tangki 5 m di bawah permukaan. Kecepatan semburan sekitar...",["5 m/s","10 m/s","25 m/s"],1,"v = √(2·9,8·5) ≈ 9,9 m/s."],
+["Aliran air di pipa berubah turbulen ketika...",["Re kecil","Re sangat besar","Airnya diam"],1,"Re di atas sekitar 4.000 berarti turbulen."]];
+let sk=0,ans=new Set();
+Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q rv';d.innerHTML=`<strong>${i+1}. ${q[0]}</strong><div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+q[1].forEach((o,j)=>{const b=document.createElement('button');b.textContent=o;b.onclick=()=>{
+d.querySelectorAll('button').forEach(x=>x.classList.remove('ok','no'));b.classList.add(j===q[2]?'ok':'no');
+d.querySelector('.fb').textContent=j===q[2]?'Benar. '+q[3]:'Belum tepat, coba lagi.';
+if(j===q[2]&&!ans.has(i)){ans.add(i);sk++;$('sc').textContent='Skor: '+sk+' dari '+Q.length+(sk==Q.length?' 🎉 Sempurna!':'')}};
+d.querySelector('.opts').appendChild(b)});$('quiz').appendChild(d);io.observe(d)});
+</script>
+</body>
+</html>
